@@ -1,0 +1,65 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+	<changeSet id="20251212" author="Momoji123">
+	
+		<createTable tableName="USERS" schemaName="chimichurri">
+				<column name="ID" type="INTEGER">
+					<constraints nullable="false" primaryKey="true" primaryKeyName="USERS_PKEY"/>
+					seq
+				</column>
+				<column name="NAME" type="varchar(100)">
+					<constraints nullable="false"/>
+				</column>
+		</createTable>
+		<createSequence sequenceName="USER_SEQ" dataType="INTEGER" incrementBy="1" startValue="1"/>
+		
+		<createTable tableName="AUTH" schemaName="chimichurri">
+			<column name="ID" type="INTEGER">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="AUTH_PKEY"/>
+			</column>
+			<column name="USERNAME" type="varchar(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="PASSWORD" type="varchar(500)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="USERID" type="INTEGER">
+				<constraints nullable="false" foreignKeyName="FK_AUTH_USER" referencedTableName="USERS" referencedColumnNames="ID" referencedTableSchemaName="chimichurri"/>
+			</column>
+		</createTable>
+		<createSequence sequenceName="AUTH_SEQ" dataType="INTEGER" incrementBy="1" startValue="1"/>
+		
+		<createTable tableName="ACCOUNT" schemaName="chimichurri">
+			<column name="ID" type="INTEGER">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="ACCOUNT_PKEY"/>
+			</column>
+			<column name="TYPE" type="varchar(150)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="USERID" type="INTEGER">
+				<constraints nullable="false" foreignKeyName="FK_ACCOUNT_USER" referencedTableName="USERS" referencedColumnNames="ID" referencedTableSchemaName="chimichurri"/>
+			</column>
+		</createTable>
+		<createSequence sequenceName="ACCOUNT_SEQ" dataType="INTEGER" incrementBy="1" startValue="1"/>
+		
+		<createTable tableName="TRANSACTION" schemaName="chimichurri">
+			<column name="ID" type="INTEGER">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="TRANSACTION_PKEY"/>
+			</column>
+			<column name="ACCOUNTID" type="INTEGER">
+				<constraints nullable="false" foreignKeyName="FK_TRANSACTION_ACCOUNT" referencedTableName="ACCOUNT" referencedColumnNames="ID" referencedTableSchemaName="chimichurri"/>
+			</column>
+			<column name="TRANSACTION_ID" type="varchar(50)"></column>
+			<column name="TRANSACTION_DATE" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="BASE_ASSET" type="VARCHAR(50)"></column>
+			<column name="ASSET" type="VARCHAR(50)"></column>
+			<column name="RATE" type="NUMERIC(19, 2)"></column>
+			<column name="AMOUNT" type="NUMERIC(19, 2)"></column>
+		</createTable>
+		<createSequence sequenceName="TRANSACTION_SEQ" dataType="INTEGER" incrementBy="1" startValue="1"/>
+		
+	</changeSet>
+	
+</databaseChangeLog>
