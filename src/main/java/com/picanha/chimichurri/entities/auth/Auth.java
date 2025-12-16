@@ -1,5 +1,6 @@
 package com.picanha.chimichurri.entities.auth;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.picanha.chimichurri.entities.user.User;
 
 import jakarta.persistence.CascadeType;
@@ -11,7 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -38,6 +38,7 @@ public class Auth {
         nullable = false,
         foreignKey = @ForeignKey(name = "FK_AUTH_USER")
     )
+    @JsonIgnore
     private User user;
 
     // Constructors

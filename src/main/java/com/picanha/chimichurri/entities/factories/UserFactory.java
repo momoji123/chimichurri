@@ -3,8 +3,6 @@ package com.picanha.chimichurri.entities.factories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.picanha.chimichurri.entities.account.Account;
-import com.picanha.chimichurri.entities.account.AccountType;
 import com.picanha.chimichurri.entities.auth.Auth;
 import com.picanha.chimichurri.entities.user.User;
 import com.picanha.chimichurri.entities.user.UserService;
@@ -30,7 +28,7 @@ public class UserFactory {
 		
 		u.setAuth(auth);
 		
-		userService.saveUser(u);
+		userService.save(u);
 		
 		//create account
 		accFactory.createNewAccount(u);

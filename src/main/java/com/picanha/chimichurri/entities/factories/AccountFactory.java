@@ -22,12 +22,12 @@ public class AccountFactory {
 		Account accCrypt = new Account();
 		accCrypt.setType(AccountType.CRPYTO_WALLET);
 		accCrypt.setUser(u);
-		accList.add(accountService.saveAccount(accCrypt));
+		accList.add(accountService.save(accCrypt));
 		
 		Account accFiat = new Account();
 		accFiat.setType(AccountType.FIAT_WALLET);
 		accFiat.setUser(u);
-		accList.add(accountService.saveAccount(accFiat));
+		accList.add(accountService.save(accFiat));
 		
 		return accList;
 	}

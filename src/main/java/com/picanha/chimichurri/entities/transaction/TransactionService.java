@@ -1,4 +1,4 @@
-package com.picanha.chimichurri.entities.user;
+package com.picanha.chimichurri.entities.transaction;
 
 import java.util.List;
 
@@ -11,29 +11,26 @@ import com.picanha.chimichurri.entities.BaseServices;
 import jakarta.persistence.EntityManager;
 
 @Service
-public class UserService  extends BaseServices<User>{
-	public UserService() {
-		super(User.class);
+public class TransactionService extends BaseServices<Transaction>{
+	public TransactionService() {
+		super(Transaction.class);
 	}
-	
+
 	@Autowired
 	private PlatformTransactionManager txManager;
 	@Autowired
 	private EntityManager em;
-
-
 	
-	public User save(User obj) {
+	public Transaction save(Transaction obj) {
 		return save(obj, txManager, em);
 	}
 	
-	public User getById(int id) {		
+	public Transaction getById(int id) {		
 		return getById(id, em);
 	}
-
-	@Override
-	public List<User> getAll() {
-		return getAll(em);
+	
+	public List<Transaction> getAll(){
+		return getAll();
 	}
 
 	@Override
@@ -42,7 +39,7 @@ public class UserService  extends BaseServices<User>{
 	}
 
 	@Override
-	public void delete(User obj) {
+	public void delete(Transaction obj) {
 		delete(obj, txManager, em);
 	}
 }

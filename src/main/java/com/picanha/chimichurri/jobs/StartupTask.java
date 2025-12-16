@@ -7,9 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.picanha.chimichurri.entities.factories.UserFactory;
 import com.picanha.chimichurri.entities.user.User;
-import com.picanha.chimichurri.entities.user.UserService;
 
-import tools.jackson.core.json.JsonFactory;
 import tools.jackson.databind.ObjectMapper;
 
 @Component
@@ -31,8 +29,8 @@ public class StartupTask implements ApplicationRunner {
 		
 
 		ObjectMapper om = new ObjectMapper();
-		System.out.println(om.writeValueAsString(u1));
-		System.out.println(om.writeValueAsString(u2));
-		System.out.println(om.writeValueAsString(u3));
+		System.out.println(om.writeValueAsString(u1) + om.writeValueAsString(u1.getAuth()));
+		System.out.println(om.writeValueAsString(u2) + om.writeValueAsString(u2.getAuth()));
+		System.out.println(om.writeValueAsString(u3) + om.writeValueAsString(u3.getAuth()));
 	}
 }

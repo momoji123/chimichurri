@@ -1,4 +1,4 @@
-package com.picanha.chimichurri.entities.user;
+package com.picanha.chimichurri.entities.auth;
 
 import java.util.List;
 
@@ -11,28 +11,26 @@ import com.picanha.chimichurri.entities.BaseServices;
 import jakarta.persistence.EntityManager;
 
 @Service
-public class UserService  extends BaseServices<User>{
-	public UserService() {
-		super(User.class);
+public class AuthService extends BaseServices<Auth>{
+	public AuthService() {
+		super(Auth.class);
 	}
-	
+
 	@Autowired
 	private PlatformTransactionManager txManager;
 	@Autowired
 	private EntityManager em;
-
-
 	
-	public User save(User obj) {
+	public Auth save(Auth obj) {
 		return save(obj, txManager, em);
 	}
 	
-	public User getById(int id) {		
+	public Auth getById(int id) {		
 		return getById(id, em);
 	}
 
 	@Override
-	public List<User> getAll() {
+	public List<Auth> getAll() {
 		return getAll(em);
 	}
 
@@ -42,7 +40,7 @@ public class UserService  extends BaseServices<User>{
 	}
 
 	@Override
-	public void delete(User obj) {
+	public void delete(Auth obj) {
 		delete(obj, txManager, em);
 	}
 }
