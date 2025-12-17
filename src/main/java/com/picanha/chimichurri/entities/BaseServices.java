@@ -38,7 +38,7 @@ public abstract class BaseServices<T> {
         } catch (Exception e) {
             // manually rollback
             txManager.rollback(status);
-            throw new RuntimeException("Failed to save user", e);
+            throw new RuntimeException("Failed to save", e);
         }
 	}
 	
@@ -57,7 +57,7 @@ public abstract class BaseServices<T> {
 		List<T> resultList = tq.getResultList();
 		
 		if(resultList.size()>1) {
-			throw new RuntimeException(resultList.size() + " user has ID " + id);
+			throw new RuntimeException(resultList.size() + " has ID " + id);
 		}else if(resultList.size()<1) {
 			return null;
 		}
@@ -100,7 +100,7 @@ public abstract class BaseServices<T> {
         } catch (Exception e) {
             // manually rollback
             txManager.rollback(status);
-            throw new RuntimeException("Failed to save user", e);
+            throw new RuntimeException("Failed to delete", e);
         }
 	}
 }

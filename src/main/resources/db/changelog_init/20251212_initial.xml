@@ -56,7 +56,7 @@
 			<column name="BASE_ASSET" type="VARCHAR(50)"></column>
 			<column name="ASSET" type="VARCHAR(50)"></column>
 			<column name="RATE" type="NUMERIC(19, 2)"></column>
-			<column name="AMOUNT" type="NUMERIC(19, 2)"></column>
+			<column name="AMOUNT" type="NUMERIC(29, 12)"></column>
 		</createTable>
 		<createSequence sequenceName="TRANSACTION_SEQ" dataType="INTEGER" incrementBy="1" startValue="1"/>
 		
