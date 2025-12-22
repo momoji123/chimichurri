@@ -18,6 +18,8 @@ import com.picanha.chimichurri.entities.transaction.Transaction;
 import com.picanha.chimichurri.entities.transaction.TransactionService;
 import com.picanha.chimichurri.entities.user.User;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Service
 public class TransactionFactory {
 
@@ -27,11 +29,11 @@ public class TransactionFactory {
 	private AccountService accService;
 
 	public List<Transaction> createNewCryptoTransaction(User u, ZonedDateTime date, BigDecimal amount, BigDecimal rate,
-			String fiatAsset, String cryptoAsset) {
+			String fiatAsset, String cryptoAsset, HttpServletRequest req) {
 		List<Account> accountList = accService.getByUser(u);
 		List<Transaction> transList = new ArrayList<>();
 		String baseTID = "tx-" + u.getId() + "-"
-				+ ZonedDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyyHHmmss"));
+				+ ZonedDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyyHHmmssSSS"));
 		// incoming To Crypto Account
 		Transaction t = new Transaction();
 		t.setAccount(accountList.stream().filter(acc -> acc.getType().equals(AccountType.CRYPTO_WALLET))
@@ -54,19 +56,19 @@ public class TransactionFactory {
 		tOut.setTransactionDate(date);
 		tOut.setTransactionId(baseTID + "-out");
 
-		t = transService.save(t);
+		t = transService.save(t, req);
 		transList.add(t);
-		tOut = transService.save(tOut);
+		tOut = transService.save(tOut, req);
 		transList.add(tOut);
 		return transList;
 	}
 
 	public List<Transaction> createNewCryptoTransactionWithFiatAmount(User u, ZonedDateTime date, BigDecimal fiatAmount,
-			BigDecimal rate, String fiatAsset, String cryptoAsset) {
+			BigDecimal rate, String fiatAsset, String cryptoAsset, HttpServletRequest req) {
 		List<Account> accountList = accService.getByUser(u);
 		List<Transaction> transList = new ArrayList<>();
 		String baseTID = "tx-" + u.getId() + "-"
-				+ ZonedDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyyHHmmss"));
+				+ ZonedDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyyHHmmssSSS"));
 		// incoming To Crypto Account
 		Transaction t = new Transaction();
 		t.setAccount(accountList.stream().filter(acc -> acc.getType().equals(AccountType.CRYPTO_WALLET))
@@ -89,17 +91,18 @@ public class TransactionFactory {
 		tOut.setTransactionDate(date);
 		tOut.setTransactionId(baseTID + "-out");
 
-		t = transService.save(t);
+		t = transService.save(t, req);
 		transList.add(t);
-		tOut = transService.save(tOut);
+		tOut = transService.save(tOut, req);
 		transList.add(tOut);
 		return transList;
 	}
 
-	public Transaction addFiatMoney(User u, ZonedDateTime date, BigDecimal amount, String asset) {
+	public Transaction addFiatMoney(User u, ZonedDateTime date, BigDecimal amount, String asset,
+			HttpServletRequest req) {
 		List<Account> accountList = accService.getByUser(u);
 		String baseTID = "tx-" + u.getId() + "-"
-				+ ZonedDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyyHHmmss"));
+				+ ZonedDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyyHHmmssSSS"));
 		// add fiat money
 		Transaction t = new Transaction();
 		t.setAccount(accountList.stream().filter(acc -> acc.getType().equals(AccountType.FIAT_WALLET))
@@ -111,8 +114,16 @@ public class TransactionFactory {
 		t.setTransactionDate(date);
 		t.setTransactionId(baseTID + "-in");
 
-		t = transService.save(t);
+		t = transService.save(t, req);
 
 		return t;
+	}
+
+	public void commit(HttpServletRequest req) {
+		accService.commit(req);
+	}
+
+	public void rollback(HttpServletRequest req) {
+		accService.rollback(req);
 	}
 }

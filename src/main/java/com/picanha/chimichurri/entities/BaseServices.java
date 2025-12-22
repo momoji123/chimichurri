@@ -13,94 +13,114 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.servlet.http.HttpServletRequest;
 
 public abstract class BaseServices<T> {
-	
-    private final Class<T> entityClass;
 
-    public BaseServices(Class<T> entityClass) {
-        this.entityClass = entityClass;
-    }
+	private final String DB_TX_STAT = "DB_TX_STAT";
 
-    public abstract T save(T obj);
-    
-	protected T save(T obj, PlatformTransactionManager txManager, EntityManager em) {
-		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+	protected PlatformTransactionManager txManager;
+	protected EntityManager em;
 
-        try {
-            em.persist(obj);
-            em.flush();
+	private final Class<T> entityClass;
 
-            // manually commit
-            txManager.commit(status);
-            return obj;
-
-        } catch (Exception e) {
-            // manually rollback
-            txManager.rollback(status);
-            throw new RuntimeException("Failed to save", e);
-        }
+	public BaseServices(Class<T> entityClass, PlatformTransactionManager txManager, EntityManager em) {
+		this.entityClass = entityClass;
+		this.txManager = txManager;
+		this.em = em;
 	}
-	
-	public abstract T getById(int id);
-	
-	protected T getById(int id, EntityManager em) {		
+
+	public T save(T obj, HttpServletRequest request) {
+		startTransaction(request);
+
+		try {
+			em.persist(obj);
+			em.flush();
+			return obj;
+
+		} catch (Exception e) {
+			rollback(request);
+			throw new RuntimeException("Failed to save", e);
+		}
+	}
+
+	public void rollback(HttpServletRequest request) {
+		TransactionStatus status;
+		// manually rollback
+		status = (TransactionStatus) request.getAttribute(DB_TX_STAT);
+		if (status == null) {
+			return;
+		}
+		txManager.rollback(status);
+		request.removeAttribute(DB_TX_STAT);
+	}
+
+	public void commit(HttpServletRequest request) {
+		// manually commit
+		TransactionStatus status = (TransactionStatus) request.getAttribute(DB_TX_STAT);
+		if (status == null) {
+			return;
+		}
+		txManager.commit(status);
+		request.removeAttribute(DB_TX_STAT);
+	}
+
+	private void startTransaction(HttpServletRequest request) {
+		TransactionStatus status = (TransactionStatus) request.getAttribute(DB_TX_STAT);
+
+		if (status == null) {
+			status = txManager.getTransaction(new DefaultTransactionDefinition());
+			request.setAttribute(DB_TX_STAT, status);
+		}
+	}
+
+	public T getById(int id) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<T> query = cb.createQuery(entityClass);
 		Root<T> root = query.from(entityClass);
-		
+
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		predicates.add(root.get("id").equalTo(id));
-		
+
 		query = query.select(root).distinct(true).where(predicates);
 		TypedQuery<T> tq = em.createQuery(query);
 		List<T> resultList = tq.getResultList();
-		
-		if(resultList.size()>1) {
+
+		if (resultList.size() > 1) {
 			throw new RuntimeException(resultList.size() + " has ID " + id);
-		}else if(resultList.size()<1) {
+		} else if (resultList.size() < 1) {
 			return null;
 		}
-		
+
 		return resultList.get(0);
 	}
-	
-	public abstract List<T> getAll();
-	
-	protected List<T> getAll(EntityManager em) {	
+
+	public List<T> getAll() {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<T> query = cb.createQuery(entityClass);
 		Root<T> root = query.from(entityClass);
-		
+
 		query = query.select(root).distinct(true);
 		TypedQuery<T> tq = em.createQuery(query);
 		List<T> resultList = tq.getResultList();
 		return resultList;
 	}
-	
-	public abstract void deleteById(int id);
-	
-	protected void deleteById(int id, PlatformTransactionManager txManager, EntityManager em) {	
-		T obj = getById(id, em);
-		delete(obj, txManager, em);
+
+	public void deleteById(int id, HttpServletRequest req) {
+		T obj = getById(id);
+		delete(obj, req);
 	}
 
-	public abstract void delete(T obj);
-	
-	protected void delete(T obj, PlatformTransactionManager txManager, EntityManager em) {
-		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+	public void delete(T obj, HttpServletRequest req) {
+		startTransaction(req);
 
-        try {
-            em.persist(obj);
-            em.flush();
+		try {
+			em.persist(obj);
+			em.flush();
 
-            // manually commit
-            txManager.commit(status);
-
-        } catch (Exception e) {
-            // manually rollback
-            txManager.rollback(status);
-            throw new RuntimeException("Failed to delete", e);
-        }
+		} catch (Exception e) {
+			rollback(req);
+			throw new RuntimeException("Failed to delete", e);
+		}
 	}
 }

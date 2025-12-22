@@ -44,7 +44,7 @@ public class KursGenerator {
 		}
 	}
 
-	public static void generateMonthlyRates(String currency, int year, int month, double pivotRate,
+	private static void generateMonthlyRates(String currency, int year, int month, double pivotRate,
 			double swingPercentage) {
 
 		YearMonth ym = YearMonth.of(year, month);
@@ -88,6 +88,9 @@ public class KursGenerator {
 	}
 
 	public static BigDecimal getKurs(String currency, LocalDate date) {
+		if (currency.equalsIgnoreCase("EUR")) {
+			return BigDecimal.ONE;
+		}
 		Map<String, Map<String, BigDecimal>> rateData = readMonthlyRates(currency, date.getMonthValue(),
 				date.getYear());
 		BigDecimal rate = rateData.get(currency).get(date.toString());
@@ -100,6 +103,12 @@ public class KursGenerator {
 
 		Map<String, BigDecimal> rateMap = new HashMap<>();
 		for (LocalDate currDate = fromDate; fromDate.compareTo(toDate) <= 0; fromDate.plusDays(1)) {
+
+			if (currency.equalsIgnoreCase("EUR")) {
+				rateMap.put(currDate.toString(), BigDecimal.ONE);
+				continue;
+			}
+
 			if (prevDate == null || currDate.getYear() > prevDate.getYear()) {
 				rateData = readMonthlyRates(currency, currDate.getMonthValue(), currDate.getYear());
 			}
@@ -111,7 +120,7 @@ public class KursGenerator {
 		return rateMap;
 	}
 
-	public static Map<String, Map<String, BigDecimal>> readMonthlyRates(String currency, int month, int year) {
+	private static Map<String, Map<String, BigDecimal>> readMonthlyRates(String currency, int month, int year) {
 		String fileName = getFilename(currency, month, year);
 
 		boolean isExist = Files.isReadable(Paths.get(fileName));

@@ -1,8 +1,5 @@
 package com.picanha.chimichurri.entities.user;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -11,38 +8,8 @@ import com.picanha.chimichurri.entities.BaseServices;
 import jakarta.persistence.EntityManager;
 
 @Service
-public class UserService  extends BaseServices<User>{
-	public UserService() {
-		super(User.class);
-	}
-	
-	@Autowired
-	private PlatformTransactionManager txManager;
-	@Autowired
-	private EntityManager em;
-
-
-	
-	public User save(User obj) {
-		return save(obj, txManager, em);
-	}
-	
-	public User getById(int id) {		
-		return getById(id, em);
-	}
-
-	@Override
-	public List<User> getAll() {
-		return getAll(em);
-	}
-
-	@Override
-	public void deleteById(int id) {
-		deleteById(id, txManager, em);
-	}
-
-	@Override
-	public void delete(User obj) {
-		delete(obj, txManager, em);
+public class UserService extends BaseServices<User> {
+	public UserService(PlatformTransactionManager txManager, EntityManager em) {
+		super(User.class, txManager, em);
 	}
 }

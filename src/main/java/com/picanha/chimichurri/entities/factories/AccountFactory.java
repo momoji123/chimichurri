@@ -11,23 +11,25 @@ import com.picanha.chimichurri.entities.account.AccountService;
 import com.picanha.chimichurri.entities.account.AccountType;
 import com.picanha.chimichurri.entities.user.User;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Service
 public class AccountFactory {
 
 	@Autowired
 	private AccountService accountService;
 
-	public List<Account> createNewAccount(User u) {
+	public List<Account> createNewAccount(User u, HttpServletRequest req) {
 		List<Account> accList = new ArrayList<>();
 		Account accCrypt = new Account();
 		accCrypt.setType(AccountType.CRYPTO_WALLET);
 		accCrypt.setUser(u);
-		accList.add(accountService.save(accCrypt));
+		accList.add(accountService.save(accCrypt, req));
 
 		Account accFiat = new Account();
 		accFiat.setType(AccountType.FIAT_WALLET);
 		accFiat.setUser(u);
-		accList.add(accountService.save(accFiat));
+		accList.add(accountService.save(accFiat, req));
 
 		return accList;
 	}

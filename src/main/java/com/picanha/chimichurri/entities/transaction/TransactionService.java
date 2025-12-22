@@ -24,39 +24,12 @@ import jakarta.persistence.criteria.Root;
 
 @Service
 public class TransactionService extends BaseServices<Transaction> {
-	public TransactionService() {
-		super(Transaction.class);
+	public TransactionService(PlatformTransactionManager txManager, EntityManager em) {
+		super(Transaction.class, txManager, em);
 	}
-
-	@Autowired
-	private PlatformTransactionManager txManager;
-	@Autowired
-	private EntityManager em;
 
 	@Autowired
 	private AccountService accountService;
-
-	public Transaction save(Transaction obj) {
-		return save(obj, txManager, em);
-	}
-
-	public Transaction getById(int id) {
-		return getById(id, em);
-	}
-
-	public List<Transaction> getAll() {
-		return getAll(em);
-	}
-
-	@Override
-	public void deleteById(int id) {
-		deleteById(id, txManager, em);
-	}
-
-	@Override
-	public void delete(Transaction obj) {
-		delete(obj, txManager, em);
-	}
 
 	public List<Transaction> getBy(User u, AccountType type, String asset, ZonedDateTime fromTransactionDate,
 			ZonedDateTime toTransactionDate) {
