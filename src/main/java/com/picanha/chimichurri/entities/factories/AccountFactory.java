@@ -13,22 +13,22 @@ import com.picanha.chimichurri.entities.user.User;
 
 @Service
 public class AccountFactory {
-	
+
 	@Autowired
 	private AccountService accountService;
 
 	public List<Account> createNewAccount(User u) {
 		List<Account> accList = new ArrayList<>();
 		Account accCrypt = new Account();
-		accCrypt.setType(AccountType.CRPYTO_WALLET);
+		accCrypt.setType(AccountType.CRYPTO_WALLET);
 		accCrypt.setUser(u);
 		accList.add(accountService.save(accCrypt));
-		
+
 		Account accFiat = new Account();
 		accFiat.setType(AccountType.FIAT_WALLET);
 		accFiat.setUser(u);
 		accList.add(accountService.save(accFiat));
-		
+
 		return accList;
 	}
 }
