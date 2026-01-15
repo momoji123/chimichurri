@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -98,18 +99,23 @@ public class KursGenerator {
 	}
 
 	public static Map<String, BigDecimal> getKurs(String currency, LocalDate fromDate, LocalDate toDate) {
+		long days = fromDate.until(toDate, ChronoUnit.DAYS);
+		if (days > 365) {
+			throw new IllegalArgumentException("fromDate and toDate cannot exceed 365 days!");
+		}
 		LocalDate prevDate = null;
 		Map<String, Map<String, BigDecimal>> rateData = null;
 
 		Map<String, BigDecimal> rateMap = new HashMap<>();
-		for (LocalDate currDate = fromDate; fromDate.compareTo(toDate) <= 0; fromDate.plusDays(1)) {
+		for (LocalDate currDate = fromDate; currDate.compareTo(toDate) <= 0; currDate = currDate.plusDays(1)) {
 
 			if (currency.equalsIgnoreCase("EUR")) {
 				rateMap.put(currDate.toString(), BigDecimal.ONE);
 				continue;
 			}
 
-			if (prevDate == null || currDate.getYear() > prevDate.getYear()) {
+			if (prevDate == null || currDate.getMonthValue() > prevDate.getMonthValue()
+					|| currDate.getYear() > prevDate.getYear()) {
 				rateData = readMonthlyRates(currency, currDate.getMonthValue(), currDate.getYear());
 			}
 
