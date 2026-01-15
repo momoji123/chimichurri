@@ -7,14 +7,12 @@ import java.time.ZonedDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.picanha.chimichurri.entities.transaction.Transaction;
 
-public class TransactionDTO {
+public class TransactionDTO extends BaseTransactionDTO {
 	private String id;
 	private int dbId;
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private ZonedDateTime date; // `2025-10-05T05:04:10.852+01:00`,
-	private TransactionType type;
-	private String asset;
-	private BigDecimal amount;
+
 	private BigDecimal price;
 	private BigDecimal total;
 	private TransactionStatus status;
@@ -48,30 +46,6 @@ public class TransactionDTO {
 
 	public void setDate(ZonedDateTime date) {
 		this.date = date;
-	}
-
-	public TransactionType getType() {
-		return type;
-	}
-
-	public void setType(TransactionType type) {
-		this.type = type;
-	}
-
-	public String getAsset() {
-		return asset;
-	}
-
-	public void setAsset(String asset) {
-		this.asset = asset;
-	}
-
-	public BigDecimal getAmount() {
-		return amount;
-	}
-
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
 	}
 
 	public BigDecimal getPrice() {

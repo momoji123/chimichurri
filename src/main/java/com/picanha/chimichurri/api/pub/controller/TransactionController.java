@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.picanha.chimichurri.api.pub.controller.configs.CustomRequestException;
+import com.picanha.chimichurri.api.pub.dto.BaseTransactionDTO;
 import com.picanha.chimichurri.api.pub.dto.TransactionDTO;
 import com.picanha.chimichurri.api.pub.dto.TransactionType;
 import com.picanha.chimichurri.api.pub.dto.TransactionWithSummaryDTO;
@@ -28,6 +29,7 @@ import com.picanha.chimichurri.entities.user.User;
 import com.picanha.chimichurri.entities.user.UserService;
 import com.picanha.chimichurri.util.KursGenerator;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -43,6 +45,7 @@ public class TransactionController {
 	@Autowired
 	private TransactionFactory tf;
 
+	@Operation(summary = "Get transactions summary", description = "Return Transaction summary and transactions (optional). Client might also filter by asset.")
 	@GetMapping(path = "/transactions/summary")
 	private TransactionWithSummaryDTO getTransactionsSummary(@RequestParam AccountType type,
 			@RequestParam(required = false) String asset,
@@ -63,10 +66,11 @@ public class TransactionController {
 		return result;
 	}
 
+	@Operation(summary = "Get transactions (with summary)", description = "Return Transaction transactions and summary of it. Client might also filter by asset, fromDate and toDate. Date must be in ISO.DATE_TIME Format (Ex: '2007-12-15T10:15:30+01:00')")
 	@GetMapping(path = "/transactions")
 	private TransactionWithSummaryDTO getTransactions(
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime fromDate, // 2007-12-03T10:15:30+01:00
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime toDate, // 2007-12-03T10:15:30+01:00
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime fromDate, // 2007-12-15T10:15:30+01:00
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime toDate, // 2007-12-15T10:15:30+01:00
 			@RequestParam AccountType type, @RequestParam(required = false) String asset, HttpServletRequest request) {
 		// for now always use test user 1
 		User u = us.getById(1);
@@ -81,8 +85,9 @@ public class TransactionController {
 		return result;
 	}
 
+	@Operation(summary = "Add Fiat money to wallet", description = "Add fiat money to wallet. Client must fill asset, type (sell/buy) and amount in body. ")
 	@PutMapping(path = "/transactions/fiat-money")
-	private TransactionDTO saveTransaction(@RequestBody(required = true) TransactionDTO dto,
+	private TransactionDTO saveTransaction(@RequestBody(required = true) BaseTransactionDTO dto,
 			HttpServletRequest request) {
 
 		// for now always use test user 1
@@ -139,8 +144,9 @@ public class TransactionController {
 		}
 	}
 
+	@Operation(summary = "Buy crypto", description = "This API is for client to buy crypto assets. Client must define asset, type (sell/buy) and amount (EUR) in body.")
 	@PutMapping(path = "/transactions/crypto")
-	private List<TransactionDTO> saveCryptoTransaction(@RequestBody(required = true) TransactionDTO dto,
+	private List<TransactionDTO> saveCryptoTransaction(@RequestBody(required = true) BaseTransactionDTO dto,
 			HttpServletRequest request) {
 
 		// for now always use test user 1
