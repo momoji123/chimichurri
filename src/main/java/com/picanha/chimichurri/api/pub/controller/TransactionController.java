@@ -3,6 +3,7 @@ package com.picanha.chimichurri.api.pub.controller;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import com.picanha.chimichurri.entities.transaction.Transaction;
 import com.picanha.chimichurri.entities.transaction.TransactionService;
 import com.picanha.chimichurri.entities.user.User;
 import com.picanha.chimichurri.entities.user.UserService;
+import com.picanha.chimichurri.jobs.StartupTask;
 import com.picanha.chimichurri.util.KursGenerator;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,6 +41,8 @@ import jakarta.servlet.http.HttpServletRequest;
 		RequestMethod.DELETE }, allowedHeaders = { "*" })
 public class TransactionController {
 
+	private final StartupTask startupTask;
+
 	@Autowired
 	private TransactionService ts;
 	@Autowired
@@ -48,9 +52,14 @@ public class TransactionController {
 	@Autowired
 	private CryptoConfigService cryptoConfig;
 
+	TransactionController(StartupTask startupTask) {
+		this.startupTask = startupTask;
+	}
+
 	@Operation(summary = "Get transactions summary", description = "Return Transaction summary and transactions (optional). Client might also filter by asset.")
 	@GetMapping(path = "/summary")
-	private TransactionWithSummaryDTO getTransactionsSummary(@RequestParam AccountType type,
+	private TransactionWithSummaryDTO getTransactionsSummary(
+			@RequestParam(required = false, name = "type") AccountType inputType,
 			@RequestParam(required = false) String asset,
 			@RequestParam(required = false, defaultValue = "false") boolean showTransactions,
 			HttpServletRequest request) {
@@ -58,8 +67,20 @@ public class TransactionController {
 		User u = us.getById(1);
 
 		List<TransactionDTO> dtoList = new ArrayList<>();
-		for (Transaction t : ts.getBy(u, type, asset, null, null)) {
-			dtoList.add(new TransactionDTO(t));
+		List<AccountType> typeList = new ArrayList<>();
+
+		if (inputType != null) {
+			typeList.add(inputType);
+		} else {
+			for (AccountType t : AccountType.values()) {
+				typeList.add(t);
+			}
+		}
+
+		for (AccountType type : typeList) {
+			for (Transaction t : ts.getBy(u, type, asset, null, null)) {
+				dtoList.add(new TransactionDTO(t));
+			}
 		}
 
 		TransactionWithSummaryDTO result = new TransactionWithSummaryDTO(dtoList, true);
@@ -74,14 +95,29 @@ public class TransactionController {
 	private TransactionWithSummaryDTO getTransactions(
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime fromDate, // 2007-12-15T10:15:30+01:00
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime toDate, // 2007-12-15T10:15:30+01:00
-			@RequestParam AccountType type, @RequestParam(required = false) String asset, HttpServletRequest request) {
+			@RequestParam(required = false, name = "type") AccountType inputType,
+			@RequestParam(required = false) String asset, HttpServletRequest request) {
 		// for now always use test user 1
 		User u = us.getById(1);
 
 		List<TransactionDTO> dtoList = new ArrayList<>();
-		for (Transaction t : ts.getBy(u, type, asset, fromDate, toDate)) {
-			dtoList.add(new TransactionDTO(t));
+		List<AccountType> typeList = new ArrayList<>();
+
+		if (inputType != null) {
+			typeList.add(inputType);
+		} else {
+			for (AccountType t : AccountType.values()) {
+				typeList.add(t);
+			}
 		}
+
+		for (AccountType type : typeList) {
+			for (Transaction t : ts.getBy(u, type, asset, fromDate, toDate)) {
+				dtoList.add(new TransactionDTO(t));
+			}
+		}
+
+		dtoList.sort(Comparator.comparing(TransactionDTO::getDate));
 
 		TransactionWithSummaryDTO result = new TransactionWithSummaryDTO(dtoList, true);
 
