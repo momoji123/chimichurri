@@ -37,6 +37,10 @@ public class StartupTask implements ApplicationRunner {
 	public void run(ApplicationArguments args) {
 		HttpServletRequest req = new DummyHttpServletRequest();
 		initKurs();
+		List<User> allUser = userService.getAll();
+		if (allUser.size() > 0) {
+			return; // do nothing. user is already initialized
+		}
 		List<User> userList = initUsers(req);
 		initTransactions(userList.get(0), req);
 		userService.commit(req);
