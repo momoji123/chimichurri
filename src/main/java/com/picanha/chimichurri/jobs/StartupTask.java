@@ -44,7 +44,6 @@ public class StartupTask implements ApplicationRunner {
 		List<User> userList = initUsers(req);
 		initTransactions(userList.get(0), req);
 		userService.commit(req);
-		userService.rollback(req);
 	}
 
 	private List<User> initUsers(HttpServletRequest req) {

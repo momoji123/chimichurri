@@ -115,9 +115,7 @@ public abstract class BaseServices<T> {
 		startTransaction(req);
 
 		try {
-			em.persist(obj);
-			em.flush();
-
+			em.remove(obj);
 		} catch (Exception e) {
 			rollback(req);
 			throw new RuntimeException("Failed to delete", e);
