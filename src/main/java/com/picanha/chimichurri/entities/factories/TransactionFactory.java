@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.picanha.chimichurri.entities.account.Account;
+import com.picanha.chimichurri.entities.Account;
+import com.picanha.chimichurri.entities.Transaction;
+import com.picanha.chimichurri.entities.User;
+import com.picanha.chimichurri.entities.Enum.AccountType;
 import com.picanha.chimichurri.entities.account.AccountService;
-import com.picanha.chimichurri.entities.account.AccountType;
-import com.picanha.chimichurri.entities.transaction.Transaction;
 import com.picanha.chimichurri.entities.transaction.TransactionService;
-import com.picanha.chimichurri.entities.user.User;
 
 import jakarta.servlet.http.HttpServletRequest;
 

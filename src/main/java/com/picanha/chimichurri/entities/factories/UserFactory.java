@@ -3,8 +3,8 @@ package com.picanha.chimichurri.entities.factories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.picanha.chimichurri.entities.auth.Auth;
-import com.picanha.chimichurri.entities.user.User;
+import com.picanha.chimichurri.entities.Auth;
+import com.picanha.chimichurri.entities.User;
 import com.picanha.chimichurri.entities.user.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;

@@ -3,6 +3,7 @@ package com.picanha.chimichurri.entities.auth;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.picanha.chimichurri.entities.Auth;
 import com.picanha.chimichurri.entities.BaseServices;
 
 import jakarta.persistence.EntityManager;

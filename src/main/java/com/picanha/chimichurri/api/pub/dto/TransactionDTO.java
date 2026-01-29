@@ -5,7 +5,7 @@ import java.math.RoundingMode;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.picanha.chimichurri.entities.transaction.Transaction;
+import com.picanha.chimichurri.entities.Transaction;
 
 public class TransactionDTO extends BaseTransactionDTO {
 	private String id;

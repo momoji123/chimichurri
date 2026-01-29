@@ -6,8 +6,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.picanha.chimichurri.entities.Account;
 import com.picanha.chimichurri.entities.BaseServices;
-import com.picanha.chimichurri.entities.user.User;
+import com.picanha.chimichurri.entities.User;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;

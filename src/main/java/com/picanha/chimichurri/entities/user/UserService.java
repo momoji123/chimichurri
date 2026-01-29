@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.picanha.chimichurri.entities.BaseServices;
+import com.picanha.chimichurri.entities.User;
 
 import jakarta.persistence.EntityManager;
 

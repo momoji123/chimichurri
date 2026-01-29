@@ -13,9 +13,9 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import com.picanha.chimichurri.entities.User;
 import com.picanha.chimichurri.entities.factories.TransactionFactory;
 import com.picanha.chimichurri.entities.factories.UserFactory;
-import com.picanha.chimichurri.entities.user.User;
 import com.picanha.chimichurri.entities.user.UserService;
 import com.picanha.chimichurri.util.DummyHttpServletRequest;
 import com.picanha.chimichurri.util.KursGenerator;
